@@ -84,7 +84,7 @@ func sleep(milliseconds int) {
 	time.Sleep(time.Duration(milliseconds) * time.Millisecond)
 }
 
-func BannerPrintLineS(s string, number int) string {
+func BannerGetLineS(s string, number int) string {
 	str := ""
 	for i := 0; i < number; i++ {
 		str += s
@@ -92,10 +92,26 @@ func BannerPrintLineS(s string, number int) string {
 	return str
 }
 
-func BannerPrintLineCommentS(s string, comment string, number int) string {
+func BannerPrintLineS(s string, number int) {
+	str := ""
+	for i := 0; i < number; i++ {
+		str += s
+	}
+	fmt.Println(str)
+}
+
+func BannerGetLineCommentS(s string, comment string, number int) string {
 	str := strings.ToUpper(comment)
 	for i := 0; i < number-len(comment); i++ {
 		str += s
 	}
 	return str
+}
+
+func BannerPrintLineCommentS(s string, comment string, number int) {
+	str := strings.ToUpper(comment)
+	for i := 0; i < number-len(comment); i++ {
+		str += s
+	}
+	fmt.Println(str)
 }
