@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
-	"time"
 )
 
 const (
@@ -74,42 +72,6 @@ var (
 	Output *bufio.Writer = bufio.NewWriter(os.Stdout)
 )
 
-func GetFormattedTime() string {
-	return Now("Monday, 2 Jan 2006")
-}
-
-func Now(layout string) string {
-	return time.Now().Format(layout)
-}
-
-func GetGoVersion() string {
-	return runtime.Version()
-}
-
-func GetPlatform() string {
-	return runtime.GOOS
-}
-
-func GetArchitecture() string {
-	return runtime.GOARCH
-}
-
-func GetNumCPU() int {
-	return runtime.NumCPU()
-}
-
-func GetGoPath() string {
-	return os.Getenv("GOPATH")
-}
-
-func GetGoRoot() string {
-	return runtime.GOROOT()
-}
-
-func GetComplier() string {
-	return runtime.Compiler
-}
-
 func getColor(code string) string {
 	//return fmt.Sprintf("\033[3%sm", code)
 	return fmt.Sprintf("\u001b[3%sm", code)
@@ -138,6 +100,10 @@ func Background(str string, color string) string {
 
 func Color(str string, color string) string {
 	return fmt.Sprintf("%s%s%s", getColor(color), str, RESET)
+}
+
+func PrintQColor(foreground int, background int, str string) {
+
 }
 
 func Highlight(str, substr string, color string) string {

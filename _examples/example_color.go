@@ -1,8 +1,9 @@
 package main
 
 import (
-    "fmt"
-    "../colors"
+	"fmt"
+
+	"../colors"
 )
 
 func main() {
@@ -31,4 +32,5 @@ func main() {
 	fmt.Println(colors.Color("BRIGHTMAGENTA", colors.BRIGHTMAGENTA))
 	fmt.Println(colors.Color("WHITE", colors.WHITE))
 	fmt.Println(colors.Color("BRIGHTWHITE", colors.BRIGHTWHITE))
+	colors.PrintQColor(7, 1, "TESTING STRING")
 }

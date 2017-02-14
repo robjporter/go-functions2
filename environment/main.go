@@ -4,6 +4,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 )
 
 var ()
@@ -43,4 +44,12 @@ func NumCPU() int {
 
 func GOPATH() string {
 	return os.Getenv("GOPATH")
+}
+
+func GetFormattedTime() string {
+	return Now("Monday, 2 Jan 2006")
+}
+
+func Now(layout string) string {
+	return time.Now().Format(layout)
 }

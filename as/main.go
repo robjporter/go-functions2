@@ -1,11 +1,15 @@
 package as
 
 import (
+	"encoding/base64"
 	"fmt"
+	"net"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type ree struct {
@@ -118,20 +122,90 @@ var timeformats = []string{
 	"02.01.2006 15:04:05",
 }
 
+func ToIP(valuea ...interface{}) net.IP {
+	addr := ToString(valuea[0])
+	ip := net.ParseIP(addr)
+	return ip
+}
+
+func OfType(valuea ...interface{}) string {
+	value := valuea[0]
+	return fmt.Sprintf("%T", value)
+}
+
+func IsKind(valuea ...interface{}) bool {
+	value := valuea[0]
+	value2 := valuea[1]
+	return value == OfKind(value2)
+}
+
+func OfKind(valuea ...interface{}) string {
+	value := valuea[0]
+	return reflect.ValueOf(value).Kind().String()
+}
+
+func ToBase64(valuea ...interface{}) string {
+	value := valuea[0]
+	return base64.StdEncoding.EncodeToString([]byte(ToString(value)))
+}
+
+func FromBase64(valuea ...interface{}) string {
+	value := valuea[0]
+	data, err := base64.StdEncoding.DecodeString(ToString(value))
+	if err != nil {
+		return err.Error()
+	}
+	return string(data)
+}
+
+func IsEmpty(valuea ...interface{}) bool {
+	value := valuea[0]
+	g := reflect.ValueOf(value)
+	if !g.IsValid() {
+		return true
+	}
+
+	// Basically adapted from text/template.isTrue
+	switch g.Kind() {
+	default:
+		return g.IsNil()
+	case reflect.Array, reflect.Slice, reflect.Map, reflect.String:
+		return g.Len() == 0
+	case reflect.Bool:
+		return g.Bool() == false
+	case reflect.Complex64, reflect.Complex128:
+		return g.Complex() == 0
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return g.Int() == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return g.Uint() == 0
+	case reflect.Float32, reflect.Float64:
+		return g.Float() == 0
+	case reflect.Struct:
+		return false
+	}
+	return true
+}
+
+func ToRuneLength(valuea ...interface{}) int {
+	value := ToString(valuea[0])
+	return utf8.RuneCountInString(value)
+}
+
 // Bool returns a boolean value.
 // It mainly depends on the output of strconv.ParseBool,
 // but also checks for integer values.
-func Bool(valuea ...interface{}) bool {
+func ToBool(valuea ...interface{}) bool {
 	value := valuea[0]
-	if Int(value) > 0 {
+	if ToInt(value) > 0 {
 		return true
 	}
-	b, _ := strconv.ParseBool(String(value))
+	b, _ := strconv.ParseBool(ToString(value))
 	return b
 }
 
 // Bytes returns a slice of bytes.
-func Bytes(valuea ...interface{}) []byte {
+func ToBytes(valuea ...interface{}) []byte {
 	value := valuea[0]
 	if value == nil {
 		return []byte{}
@@ -154,23 +228,23 @@ func Bytes(valuea ...interface{}) []byte {
 
 // Duration converts input values to time.Duration.
 // It mainly depends on time.ParseDuration.
-func Duration(valuea ...interface{}) time.Duration {
+func ToDuration(valuea ...interface{}) time.Duration {
 	value := valuea[0]
 	switch value.(type) {
 	case int, int8, int16, int32, int64:
-		return time.Duration(Int(value))
+		return time.Duration(ToInt(value))
 	case uint, uint8, uint16, uint32, uint64:
-		return time.Duration(Int(value))
+		return time.Duration(ToInt(value))
 	case float32, float64:
-		return time.Duration(Int(value))
+		return time.Duration(ToInt(value))
 	default:
-		dur, _ := time.ParseDuration(String(value))
+		dur, _ := time.ParseDuration(ToString(value))
 		return dur
 	}
 }
 
 // FixedLengthAfter appends spacer chars after a string
-func FixedLengthAfter(str string, spacer string, length int) string {
+func ToFixedLengthAfter(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
 	if l > 0 {
@@ -183,7 +257,7 @@ func FixedLengthAfter(str string, spacer string, length int) string {
 }
 
 // FixedLengthBefore prepends spacer chars before a string
-func FixedLengthBefore(str string, spacer string, length int) string {
+func ToFixedLengthBefore(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
 	if l > 0 {
@@ -196,7 +270,7 @@ func FixedLengthBefore(str string, spacer string, length int) string {
 }
 
 // FixedLengthCenter adds spacer chars after and before a string
-func FixedLengthCenter(str string, spacer string, length int) string {
+func ToFixedLengthCenter(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
 	if l > 0 {
@@ -217,7 +291,7 @@ func FixedLengthCenter(str string, spacer string, length int) string {
 // int, uint and float gets converted as expected,
 // time is transformed to a float of the corresponding timestamp.
 // strings and byte slices gets converted via strconv.ParseFloat.
-func Float(valuea ...interface{}) float64 {
+func ToFloat(valuea ...interface{}) float64 {
 	value := valuea[0]
 	switch val := value.(type) {
 	case int:
@@ -252,7 +326,7 @@ func Float(valuea ...interface{}) float64 {
 		}
 		return float64(0)
 	default:
-		f, _ := strconv.ParseFloat(String(value), 64)
+		f, _ := strconv.ParseFloat(ToString(value), 64)
 		return float64(f)
 	}
 }
@@ -261,7 +335,7 @@ func Float(valuea ...interface{}) float64 {
 // Most values can be converted to float via Float(),
 // but floats as strings in e.g. german spelling
 // should be converted with this function.
-func FloatFromXString(valuea ...string) float64 {
+func ToFloatFromXString(valuea ...string) float64 {
 	value := valuea[0]
 	value = strings.Trim(value, "\t\n\r¢§$€ ")
 	var float float64
@@ -303,7 +377,7 @@ func FloatFromXString(valuea ...string) float64 {
 // Float values and float values in strings will be rounded via
 // "round half towards positive infinity".
 // strings get converted via strconv.ParseFloat.
-func Int(valuea ...interface{}) int64 {
+func ToInt(valuea ...interface{}) int64 {
 	value := valuea[0]
 	switch val := value.(type) {
 	case int:
@@ -338,7 +412,7 @@ func Int(valuea ...interface{}) int64 {
 		}
 		return int64(0)
 	default:
-		i, _ := strconv.ParseFloat(String(value), 64)
+		i, _ := strconv.ParseFloat(ToString(value), 64)
 		return int64(i + 0.5)
 	}
 }
@@ -346,7 +420,7 @@ func Int(valuea ...interface{}) int64 {
 // String converts input values to string.
 // Time and Duration gets converted via standard functions.
 // Most types gets "converted" via fmt.Sprintf.
-func String(valuea ...interface{}) string {
+func ToString(valuea ...interface{}) string {
 	value := valuea[0]
 	if value == nil {
 		return ""
@@ -373,9 +447,9 @@ func String(valuea ...interface{}) string {
 
 // Time converts inputs values to time.Time.
 // Time formats in the variable timeformats can be used.
-func Time(valuea ...interface{}) time.Time {
+func ToTime(valuea ...interface{}) time.Time {
 	value := valuea[0]
-	s := String(value)
+	s := ToString(value)
 	for _, format := range timeformats {
 		r, err := time.Parse(format, s)
 		if err == nil {
@@ -389,14 +463,14 @@ func Time(valuea ...interface{}) time.Time {
 // a string, trims the whitespace an returns it.
 func Trimmed(valuea ...interface{}) string {
 	value := valuea[0]
-	return strings.TrimSpace(String(value))
+	return strings.TrimSpace(ToString(value))
 }
 
 // Uint returns an uint64 of the input value.
 // Float values and float values in strings will be rounded via
 // "round half towards positive infinity".
 // strings get converted via strconv.ParseFloat.
-func Uint(valuea ...interface{}) uint64 {
+func ToUint(valuea ...interface{}) uint64 {
 	value := valuea[0]
 	switch val := value.(type) {
 	case int:
@@ -431,7 +505,7 @@ func Uint(valuea ...interface{}) uint64 {
 		}
 		return uint64(0)
 	default:
-		i, _ := strconv.ParseFloat(String(value), 64)
+		i, _ := strconv.ParseFloat(ToString(value), 64)
 		return uint64(i + 0.5)
 	}
 }
@@ -439,8 +513,8 @@ func Uint(valuea ...interface{}) uint64 {
 // Type returns a type (string) of a string.
 func Type(valuea ...interface{}) (string, error) {
 	var err error
-	str := strings.Trim(String(valuea[0]), " \t\n\r")
-	if !Time(str).IsZero() {
+	str := strings.Trim(ToString(valuea[0]), " \t\n\r")
+	if !ToTime(str).IsZero() {
 		return "date", nil
 	}
 	for _, b := range regex {
