@@ -12,6 +12,11 @@ import (
 	"unicode/utf8"
 )
 
+const (
+	KindTime reflect.Kind = iota + 1000000000
+	KindDuration
+)
+
 type ree struct {
 	typ string
 	re  string
@@ -120,6 +125,86 @@ var timeformats = []string{
 	"2006-01-02 15:04:05",
 	"2006-01-02T15:04:05",
 	"02.01.2006 15:04:05",
+}
+
+func Convert(value interface{}, t reflect.Kind) (interface{}, error) {
+
+	switch reflect.TypeOf(value).Kind() {
+	case reflect.Slice:
+		switch t {
+		case reflect.String:
+			if reflect.TypeOf(value).Elem().Kind() == reflect.Uint8 {
+				return ToString(value.([]byte)), nil
+			} else {
+				return ToString(value), nil
+			}
+		case reflect.Slice:
+		default:
+			return nil, fmt.Errorf("Could not convert slice into non-slice.")
+		}
+	case reflect.String:
+		switch t {
+		case reflect.Slice:
+			return ToBytes(value), nil
+		}
+	}
+
+	switch t {
+
+	case reflect.String:
+		return ToString(value), nil
+
+	case reflect.Uint64:
+		return ToUint(value), nil
+
+	case reflect.Uint32:
+		return uint32(ToUint(value)), nil
+
+	case reflect.Uint16:
+		return uint16(ToUint(value)), nil
+
+	case reflect.Uint8:
+		return uint8(ToUint(value)), nil
+
+	case reflect.Uint:
+		return uint(ToUint(value)), nil
+
+	case reflect.Int64:
+		return int64(ToInt64(value)), nil
+
+	case reflect.Int32:
+		return int32(ToInt64(value)), nil
+
+	case reflect.Int16:
+		return int16(ToInt64(value)), nil
+
+	case reflect.Int8:
+		return int8(ToInt64(value)), nil
+
+	case reflect.Int:
+		return int(ToInt64(value)), nil
+
+	case reflect.Float64:
+		return ToFloat(value), nil
+
+	case reflect.Float32:
+		return float32(ToFloat(value)), nil
+
+	case reflect.Bool:
+		return ToBool(value), nil
+
+	case reflect.Interface:
+		return value, nil
+
+	case KindTime:
+		return ToTime(value), nil
+
+	case KindDuration:
+		return ToDuration(value), nil
+
+	}
+
+	return nil, fmt.Errorf("Could not convert %s into %s.", reflect.TypeOf(value).Kind(), t)
 }
 
 func ToIP(valuea ...interface{}) net.IP {
@@ -414,6 +499,86 @@ func ToInt(valuea ...interface{}) int64 {
 	default:
 		i, _ := strconv.ParseFloat(ToString(value), 64)
 		return int64(i + 0.5)
+	}
+}
+
+func ToInt64(valuea ...interface{}) int64 {
+	value := valuea[0]
+	switch val := value.(type) {
+	case int:
+		return int64(val)
+	case int8:
+		return int64(val)
+	case int16:
+		return int64(val)
+	case int32:
+		return int64(val)
+	case int64:
+		return int64(val)
+	case uint:
+		return int64(val)
+	case uint8:
+		return int64(val)
+	case uint16:
+		return int64(val)
+	case uint32:
+		return int64(val)
+	case uint64:
+		return int64(val)
+	case float32:
+		return int64(val + 0.5)
+	case float64:
+		return int64(val + 0.5)
+	case time.Time:
+		return int64(val.Unix())
+	case bool:
+		if val == true {
+			return int64(1)
+		}
+		return int64(0)
+	default:
+		i, _ := strconv.ParseFloat(ToString(value), 64)
+		return int64(i + 0.5)
+	}
+}
+
+func ToInt32(valuea ...interface{}) int32 {
+	value := valuea[0]
+	switch val := value.(type) {
+	case int:
+		return int32(val)
+	case int8:
+		return int32(val)
+	case int16:
+		return int32(val)
+	case int32:
+		return int32(val)
+	case int64:
+		return int32(val)
+	case uint:
+		return int32(val)
+	case uint8:
+		return int32(val)
+	case uint16:
+		return int32(val)
+	case uint32:
+		return int32(val)
+	case uint64:
+		return int32(val)
+	case float32:
+		return int32(val + 0.5)
+	case float64:
+		return int32(val + 0.5)
+	case time.Time:
+		return int32(val.Unix())
+	case bool:
+		if val == true {
+			return int32(1)
+		}
+		return int32(0)
+	default:
+		i, _ := strconv.ParseFloat(ToString(value), 32)
+		return int32(i + 0.5)
 	}
 }
 

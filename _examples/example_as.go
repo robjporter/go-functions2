@@ -38,6 +38,9 @@ func main() {
 	fmt.Println("\nTO BYTES")
 	fmt.Println(as.ToBytes("Testing"))
 
+	fmt.Println("\nCONVERT")
+	fmt.Println(as.ToBytes("Testing"))
+
 	fmt.Println("\nTO INT")
 	fmt.Println(as.ToInt("1"))
 
