@@ -82,8 +82,8 @@ func (self *Yaml) Set(params ...interface{}) error {
 
 					log.Printf(`Using a route separated by "/" is deprecated, please use yaml.*Yaml.Get("%s") instead.`, strings.Join(p, `", "`))
 
-					dig.Dig(&self.values, route...)
-					return dig.Set(&self.values, value, route...)
+					Dig(&self.values, route...)
+					return Set(&self.values, value, route...)
 				}
 			}
 		}
@@ -92,8 +92,8 @@ func (self *Yaml) Set(params ...interface{}) error {
 	route := params[0 : l-1]
 	value := params[l-1]
 
-	dig.Dig(&self.values, route...)
-	return dig.Set(&self.values, value, route...)
+	Dig(&self.values, route...)
+	return Set(&self.values, value, route...)
 }
 
 /*
@@ -118,13 +118,13 @@ func (self *Yaml) Get(route ...interface{}) interface{} {
 
 				log.Printf(`Using a route separated by "/" is deprecated, please use yaml.*Yaml.Get("%s") instead.`, strings.Join(p, `", "`))
 
-				dig.Get(&self.values, &i, route...)
+				Get(&self.values, &i, route...)
 				return i
 			}
 		}
 	}
 
-	dig.Get(&self.values, &i, route...)
+	Get(&self.values, &i, route...)
 	return i
 }
 

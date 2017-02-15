@@ -3,6 +3,8 @@ package yaml
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/robjporter/go-functions/as"
 )
 
 /*
