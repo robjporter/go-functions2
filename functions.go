@@ -3,6 +3,7 @@ package functions
 import (
 	"html/template"
 	"os"
+	"strings"
 )
 
 var (
@@ -26,6 +27,14 @@ func Exists(path string) bool {
 		return false
 	}
 	return true
+}
+
+func GetFilenameNoExtension(s string) string {
+	n := strings.LastIndexByte(s, '.')
+	if n >= 0 {
+		return s[:n]
+	}
+	return s
 }
 
 func RemoveDuplicates(a []string) []string {
