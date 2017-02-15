@@ -207,6 +207,34 @@ func Convert(value interface{}, t reflect.Kind) (interface{}, error) {
 	return nil, fmt.Errorf("Could not convert %s into %s.", reflect.TypeOf(value).Kind(), t)
 }
 
+func ToStringMapString(valuea ...interface{}) map[string]string {
+	value := valuea[0]
+
+	var m = map[string]string{}
+
+	switch v := value.(type) {
+	case map[string]string:
+		return v
+	case map[string]interface{}:
+		for k, val := range v {
+			m[ToString(k)] = ToString(val)
+		}
+		return m
+	case map[interface{}]string:
+		for k, val := range v {
+			m[ToString(k)] = ToString(val)
+		}
+		return m
+	case map[interface{}]interface{}:
+		for k, val := range v {
+			m[ToString(k)] = ToString(val)
+		}
+		return m
+	default:
+		return m
+	}
+}
+
 func ToSlice(valuea ...interface{}) []interface{} {
 	var s []interface{}
 	value := valuea[0]
@@ -599,6 +627,24 @@ func ToInt32(valuea ...interface{}) int32 {
 	default:
 		i, _ := strconv.ParseFloat(ToString(value), 32)
 		return int32(i + 0.5)
+	}
+}
+
+func ToStringMap(valuea ...interface{}) map[string]interface{} {
+	value := valuea[0]
+
+	var m = map[string]interface{}{}
+
+	switch v := value.(type) {
+	case map[interface{}]interface{}:
+		for k, val := range v {
+			m[ToString(k)] = val
+		}
+		return m
+	case map[string]interface{}:
+		return v
+	default:
+		return m
 	}
 }
 
