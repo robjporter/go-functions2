@@ -207,6 +207,26 @@ func Convert(value interface{}, t reflect.Kind) (interface{}, error) {
 	return nil, fmt.Errorf("Could not convert %s into %s.", reflect.TypeOf(value).Kind(), t)
 }
 
+func ToSlice(valuea ...interface{}) []interface{} {
+	var s []interface{}
+	value := valuea[0]
+
+	switch v := value.(type) {
+	case []interface{}:
+		for _, u := range v {
+			s = append(s, u)
+		}
+		return s
+	case []map[string]interface{}:
+		for _, u := range v {
+			s = append(s, u)
+		}
+		return s
+	default:
+		return s
+	}
+}
+
 func ToIP(valuea ...interface{}) net.IP {
 	addr := ToString(valuea[0])
 	ip := net.ParseIP(addr)

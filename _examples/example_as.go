@@ -38,6 +38,11 @@ func main() {
 	fmt.Println("\nTO BYTES")
 	fmt.Println(as.ToBytes("Testing"))
 
+	fmt.Println("\nTO SLICE")
+	var foo2 []interface{}
+	foo2 = append(foo2, "one") //more time"
+	fmt.Println(as.ToSlice(foo2))
+
 	fmt.Println("\nCONVERT")
 	fmt.Println(as.ToBytes("Testing"))
 
