@@ -8,6 +8,7 @@ import (
 
 func main() {
 	terminal.ClearScreen()
+	fmt.Println(terminal.Width(), " x ", terminal.Height())
 	terminal.WaitD(4)
 	terminal.ClearLine()
 	terminal.Wait(4, 1)
