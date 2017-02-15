@@ -6,7 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/robjporter/GO-TermColors"
+	termcolors "github.com/robjporter/GO-TermColors"
+
 	"golang.org/x/crypto/ssh/terminal"
 )
 
