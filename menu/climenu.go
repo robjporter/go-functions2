@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	termcolors "github.com/robjporter/GO-TermColors"
+	"github.com/robjporter/go-functions/colors"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -132,7 +132,7 @@ func (m *Menu) DrawMenuItems(redraw bool) {
 		}
 
 		if index == m.CursorPos {
-			cursor := termcolors.Color("> ", termcolors.CYAN)
+			cursor := colors.Color("> ", colors.CYAN)
 			fmt.Printf("\r%s%s %s%s", cursor, prefix, menuItem.Text, newline)
 		} else {
 			fmt.Printf("\r%s%s %s%s", "  ", prefix, menuItem.Text, newline)
@@ -145,7 +145,7 @@ func (m *Menu) Render() {
 		fmt.Println(m.Heading)
 	}
 
-	fmt.Printf("%s\n", termcolors.Color(termcolors.Bold(m.Question)+":", termcolors.GREEN))
+	fmt.Printf("%s\n", colors.Color(colors.Bold(m.Question)+":", colors.GREEN))
 
 	m.DrawMenuItems(false)
 
@@ -241,16 +241,16 @@ func (m *Menu) RunInternal() (results []string, escape bool) {
 }
 
 func GetSecret(message string, defaultText string) string {
-	fmt.Printf("%s", termcolors.Color(termcolors.Bold(message), termcolors.GREEN))
+	fmt.Printf("%s", colors.Color(colors.Bold(message), colors.GREEN))
 
 	if defaultText != "" {
 		fmt.Printf(" %s%s%s",
-			termcolors.Color(termcolors.Bold("["), termcolors.GREEN),
-			termcolors.Color(defaultText, termcolors.YELLOW),
-			termcolors.Color(termcolors.Bold("]"), termcolors.GREEN))
+			colors.Color(colors.Bold("["), colors.GREEN),
+			colors.Color(defaultText, colors.YELLOW),
+			colors.Color(colors.Bold("]"), colors.GREEN))
 	}
 
-	fmt.Printf("%s ", termcolors.Color(termcolors.Bold(":"), termcolors.GREEN))
+	fmt.Printf("%s ", colors.Color(colors.Bold(":"), colors.GREEN))
 
 	text := ""
 	bytePassword, err := terminal.ReadPassword(0)
@@ -266,16 +266,16 @@ func GetSecret(message string, defaultText string) string {
 }
 
 func GetText(message string, defaultText string) string {
-	fmt.Printf("%s", termcolors.Color(termcolors.Bold(message), termcolors.GREEN))
+	fmt.Printf("%s", colors.Color(colors.Bold(message), colors.GREEN))
 
 	if defaultText != "" {
 		fmt.Printf(" %s%s%s",
-			termcolors.Color(termcolors.Bold("["), termcolors.GREEN),
-			termcolors.Color(defaultText, termcolors.YELLOW),
-			termcolors.Color(termcolors.Bold("]"), termcolors.GREEN))
+			colors.Color(colors.Bold("["), colors.GREEN),
+			colors.Color(defaultText, colors.YELLOW),
+			colors.Color(colors.Bold("]"), colors.GREEN))
 	}
 
-	fmt.Printf("%s ", termcolors.Color(termcolors.Bold(":"), termcolors.GREEN))
+	fmt.Printf("%s ", colors.Color(colors.Bold(":"), colors.GREEN))
 
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')
