@@ -187,7 +187,7 @@ func (m *Menu) RunInternal() (results []string, escape bool) {
 	m.Render()
 
 	for {
-		ascii, keyCode, err := getChar()
+		ascii, keyCode, err := GetChar()
 
 		if (ascii == 3 || ascii == 27) || err != nil {
 			fmt.Println()

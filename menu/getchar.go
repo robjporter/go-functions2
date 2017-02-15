@@ -3,7 +3,7 @@ package menu
 import "github.com/pkg/term"
 
 // Returns either an ascii code, or (if input is an arrow) a Javascript key code.
-func getChar() (ascii int, keyCode int, err error) {
+func GetChar() (ascii int, keyCode int, err error) {
 	t, _ := term.Open("/dev/tty")
 	term.RawMode(t)
 	bytes := make([]byte, 3)
