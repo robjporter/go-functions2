@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"reflect"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -17,81 +16,6 @@ const (
 	KindDuration
 )
 
-type ree struct {
-	typ string
-	re  string
-}
-
-// regex (regular expression) in a slice of ree struct
-var regex = [...]ree{
-	{
-		typ: "bool",
-		re:  "(0|1|true|false)",
-	}, {
-		typ: "int",
-		re:  "\\d+",
-	}, {
-		typ: "int",
-		re:  "\\d+[\\^eE]\\d+",
-	}, {
-		typ: "float",
-		re:  "[-+]?[0-9]*[\\.,]?[0-9]+([eE][-+]?[0-9]+)?",
-	}, {
-		typ: "price",
-		re:  "((€|\\$|¢|£|EURO?|DM|USD) ?)?[-+]?[0-9]*[\\.,]?[0-9]+([eE][-+]?[0-9]+)?( ?(€|\\$|¢|£|EURO?|DM|USD))?",
-	}, {
-		typ: "url",
-		re:  "(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?",
-	}, {
-		typ: "ipv4",
-		re:  "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])",
-	}, {
-		typ: "ipv6",
-		re:  "([0-9A-Fa-f]{1,4}:([0-9A-Fa-f]{1,4}:([0-9A-Fa-f]{1,4}:([0-9A-Fa-f]{1,4}:([0-9A-Fa-f]{1,4}:[0-9A-Fa-f]{0,4}|:[0-9A-Fa-f]{1,4})?|(:[0-9A-Fa-f]{1,4}){0,2})|(:[0-9A-Fa-f]{1,4}){0,3})|(:[0-9A-Fa-f]{1,4}){0,4})|:(:[0-9A-Fa-f]{1,4}){0,5})((:[0-9A-Fa-f]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9A-Fa-f]{1,4}:){1,6}|:):[0-9A-Fa-f]{0,4}|([0-9A-Fa-f]{1,4}:){7}:",
-	}, {
-		typ: "mac",
-		re:  "([0-9a-f]{1,2}:){5}([0-9a-f]{1,2})",
-	}, {
-		typ: "email",
-		re:  "[a-z0-9\\._%\\+\\-]+\\@[a-z0-9\\.\\-]+\\.[a-z]{2,9}",
-	}, {
-		typ: "creditcard",
-		re:  "(?:4\\d{12}(?:\\d{3})?|5[1-5]\\d{14}|3[47]\\d{13}|3(?:0[0-5]|[68]\\d)\\d{11}|6(?:011|5\\d{2})\\d{12}|(?:2131|1800|35\\d{3})\\d{11})",
-	}, {
-		typ: "color",
-		re:  "#[a-f0-9]{2,6}",
-	}, {
-		typ: "color",
-		re:  "(rgb|hsl|yuv)\\( *[\\d\\.%]+ *, *[\\d\\.%]+ *, *[\\d\\.%]+ *\\)",
-	}, {
-		typ: "color",
-		re:  "(rgba|cmyk)\\( *\\d+ *, *\\d+ *, *\\d+ *, *\\d+ *\\)",
-	}, {
-		typ: "isbn",
-		re:  "(1(?:(0)|3))?:?[- ]?(\\s)*[0-9]+[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9]*[- ]*[xX0-9]",
-	}, {
-		typ: "date",
-		re:  "(?i:([MDCLXVI])((M{0,3})((C[DM])|(D?C{0,3}))?((X[LC])|(L?XX{0,2})|L)?((I[VX])|(V?(II{0,2}))|V)?))",
-	}, {
-		typ: "alpha",
-		re:  "[a-zA-Z]+",
-	}, {
-		typ: "alphanumeric",
-		re:  "[a-zA-Z0-9]+",
-	}, {
-		typ: "base64",
-		re:  "(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=|[A-Za-z0-9+\\/]{4})",
-	}, {
-		typ: "string",
-		re:  "[[:print:]]+",
-	}, {
-		typ: "ascii",
-		re:  "[[:ascii:]]+",
-	},
-}
-
-// timeformats contains the supported time formats
-// for the convertion to time.Time.
 var timeformats = []string{
 	time.ANSIC,
 	time.UnixDate,
@@ -297,8 +221,6 @@ func IsEmpty(valuea ...interface{}) bool {
 	if !g.IsValid() {
 		return true
 	}
-
-	// Basically adapted from text/template.isTrue
 	switch g.Kind() {
 	default:
 		return g.IsNil()
@@ -325,9 +247,6 @@ func ToRuneLength(valuea ...interface{}) int {
 	return utf8.RuneCountInString(value)
 }
 
-// Bool returns a boolean value.
-// It mainly depends on the output of strconv.ParseBool,
-// but also checks for integer values.
 func ToBool(valuea ...interface{}) bool {
 	value := valuea[0]
 	if ToInt(value) > 0 {
@@ -337,7 +256,6 @@ func ToBool(valuea ...interface{}) bool {
 	return b
 }
 
-// Bytes returns a slice of bytes.
 func ToBytes(valuea ...interface{}) []byte {
 	value := valuea[0]
 	if value == nil {
@@ -359,8 +277,6 @@ func ToBytes(valuea ...interface{}) []byte {
 	}
 }
 
-// Duration converts input values to time.Duration.
-// It mainly depends on time.ParseDuration.
 func ToDuration(valuea ...interface{}) time.Duration {
 	value := valuea[0]
 	switch value.(type) {
@@ -376,7 +292,6 @@ func ToDuration(valuea ...interface{}) time.Duration {
 	}
 }
 
-// FixedLengthAfter appends spacer chars after a string
 func ToFixedLengthAfter(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
@@ -389,7 +304,6 @@ func ToFixedLengthAfter(str string, spacer string, length int) string {
 	return str[:length]
 }
 
-// FixedLengthBefore prepends spacer chars before a string
 func ToFixedLengthBefore(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
@@ -402,7 +316,6 @@ func ToFixedLengthBefore(str string, spacer string, length int) string {
 	return str[:length]
 }
 
-// FixedLengthCenter adds spacer chars after and before a string
 func ToFixedLengthCenter(str string, spacer string, length int) string {
 	spacer = spacer[:1]
 	l := length - len(str)
@@ -420,10 +333,6 @@ func ToFixedLengthCenter(str string, spacer string, length int) string {
 	return str[:length]
 }
 
-// Float converts it's input to type float64.
-// int, uint and float gets converted as expected,
-// time is transformed to a float of the corresponding timestamp.
-// strings and byte slices gets converted via strconv.ParseFloat.
 func ToFloat(valuea ...interface{}) float64 {
 	value := valuea[0]
 	switch val := value.(type) {
@@ -464,10 +373,6 @@ func ToFloat(valuea ...interface{}) float64 {
 	}
 }
 
-// FloatFromXString converts strings to float64.
-// Most values can be converted to float via Float(),
-// but floats as strings in e.g. german spelling
-// should be converted with this function.
 func ToFloatFromXString(valuea ...string) float64 {
 	value := valuea[0]
 	value = strings.Trim(value, "\t\n\r¢§$€ ")
@@ -506,10 +411,6 @@ func ToFloatFromXString(valuea ...string) float64 {
 	return float64(float)
 }
 
-// Int returns an int64 of the input value.
-// Float values and float values in strings will be rounded via
-// "round half towards positive infinity".
-// strings get converted via strconv.ParseFloat.
 func ToInt(valuea ...interface{}) int64 {
 	value := valuea[0]
 	switch val := value.(type) {
@@ -648,9 +549,6 @@ func ToStringMap(valuea ...interface{}) map[string]interface{} {
 	}
 }
 
-// String converts input values to string.
-// Time and Duration gets converted via standard functions.
-// Most types gets "converted" via fmt.Sprintf.
 func ToString(valuea ...interface{}) string {
 	value := valuea[0]
 	if value == nil {
@@ -676,8 +574,6 @@ func ToString(valuea ...interface{}) string {
 	}
 }
 
-// Time converts inputs values to time.Time.
-// Time formats in the variable timeformats can be used.
 func ToTime(valuea ...interface{}) time.Time {
 	value := valuea[0]
 	s := ToString(value)
@@ -690,17 +586,11 @@ func ToTime(valuea ...interface{}) time.Time {
 	return time.Time{}
 }
 
-// Trimmed takes the first given value, converts it to
-// a string, trims the whitespace an returns it.
 func Trimmed(valuea ...interface{}) string {
 	value := valuea[0]
 	return strings.TrimSpace(ToString(value))
 }
 
-// Uint returns an uint64 of the input value.
-// Float values and float values in strings will be rounded via
-// "round half towards positive infinity".
-// strings get converted via strconv.ParseFloat.
 func ToUint(valuea ...interface{}) uint64 {
 	value := valuea[0]
 	switch val := value.(type) {
@@ -739,52 +629,4 @@ func ToUint(valuea ...interface{}) uint64 {
 		i, _ := strconv.ParseFloat(ToString(value), 64)
 		return uint64(i + 0.5)
 	}
-}
-
-// Type returns a type (string) of a string.
-func Type(valuea ...interface{}) (string, error) {
-	var err error
-	str := strings.Trim(ToString(valuea[0]), " \t\n\r")
-	if !ToTime(str).IsZero() {
-		return "date", nil
-	}
-	for _, b := range regex {
-		var match bool
-		re := "(?i)^" + b.re + "$"
-		if match, err = regexp.MatchString(re, str); match == true {
-			//fmt.Printf("%v tested for %v with %v; result: %v\n", str, b.typ, b.re, match)
-			return b.typ, nil
-		}
-		//fmt.Printf("%v tested for %v with %v; result: %v\n", str, b.typ, b.re, match)
-	}
-	return "", err
-}
-
-// DBType returns a Database Type of a string.
-func DBType(str string) string {
-	t, err := Type(str)
-	if err != nil {
-		return "string"
-	}
-	switch t {
-	case "bool", "int", "string", "float":
-		return t
-	default:
-		return "string"
-	}
-}
-
-// DBTypeMultiple returns the lowest common denominator of a type for all inserted DBTypes
-func DBTypeMultiple(val []string) string {
-	var typeint int
-	for _, typ := range val {
-		for i, b := range regex {
-			if b.typ == typ {
-				if typeint < i {
-					typeint = i
-				}
-			}
-		}
-	}
-	return regex[typeint].typ
 }
