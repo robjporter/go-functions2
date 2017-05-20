@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
-    "../banner"
+	"../banner"
+	"fmt"
 )
 
 func main() {
 	banner.PrintNewFigure("TEST", "3x5", true)
 	fmt.Println(banner.GetNewFigure("TEST", "rounded", true))
-	fmt.Println(banner.BannerPrintLineS("=", 40))
+	banner.BannerPrintLineS("=", 40)
 }

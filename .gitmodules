@@ -1,0 +1,15 @@
+[submodule "term"]
+	path = term
+	url = https://github.com/pkg/term.git
+[submodule "yaml"]
+	path = yaml
+	url = https://github.com/go-yaml/yaml.git
+[submodule "logrus"]
+	path = logrus
+	url = https://github.com/sirupsen/logrus
+[submodule "hermes"]
+	path = hermes
+	url = https://github.com/matcornic/hermes
+[submodule "astilectron"]
+	path = astilectron
+	url = https://github.com/asticode/go-astilectron

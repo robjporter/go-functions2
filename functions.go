@@ -1,40 +1,33 @@
 package functions
 
 import (
-	"html/template"
-	"os"
 	"strings"
+	"sync"
+	"time"
 )
 
-var (
-	Bold = func(content string) (template.HTML, error) {
-		return template.HTML("<b>" + content + "</b>"), nil
-	}
-	Italic = func(content string) (template.HTML, error) {
-		return template.HTML("<i>" + content + "</i>"), nil
-	}
-	Underline = func(content string) (template.HTML, error) {
-		return template.HTML("<u>" + content + "</u>"), nil
-	}
+const (
+	VERSION = "1.1.0"
 )
 
-func Exists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
+// Parallel runs a given function n times concurrently
+// NOTE: Please set runtime.GOMAXPROCS to runtime.NumCPU() for best
+// performance
+func Parallel(n int, fn func()) {
+	var wg sync.WaitGroup
+	wg.Add(n)
+	defer wg.Wait()
+
+	for i := 0; i < n; i++ {
+		go func() {
+			fn()
+			wg.Done()
+		}()
 	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
 }
 
-func GetFilenameNoExtension(s string) string {
-	n := strings.LastIndexByte(s, '.')
-	if n >= 0 {
-		return s[:n]
-	}
-	return s
+func MakeTimestamp() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
 }
 
 func RemoveDuplicates(a []string) []string {
@@ -47,4 +40,24 @@ func RemoveDuplicates(a []string) []string {
 		}
 	}
 	return result
+}
+
+func RightPad2Len(s string, padStr string, overallLen int) string {
+	var padCountInt int
+	padCountInt = 1 + ((overallLen - len(padStr)) / len(padStr))
+	var retStr = s + strings.Repeat(padStr, padCountInt)
+	return retStr[:overallLen]
+}
+func LeftPad2Len(s string, padStr string, overallLen int) string {
+	var padCountInt int
+	padCountInt = 1 + ((overallLen - len(padStr)) / len(padStr))
+	var retStr = strings.Repeat(padStr, padCountInt) + s
+	return retStr[(len(retStr) - overallLen):]
+}
+
+func LeftPad(s string, padStr string, pLen int) string {
+	return strings.Repeat(padStr, pLen) + s
+}
+func RightPad(s string, padStr string, pLen int) string {
+	return s + strings.Repeat(padStr, pLen)
 }
