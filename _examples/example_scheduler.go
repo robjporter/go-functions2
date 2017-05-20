@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"time"
 
-	"../scheduler"
+	"../system/scheduler"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	xmlx "../xml"
+	xmlx "../format/xml"
 )
 
 func main() {

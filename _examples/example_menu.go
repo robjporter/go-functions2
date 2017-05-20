@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	climenu "../menu"
+	climenu "../cli/menu"
 )
 
 func callback(id string) {

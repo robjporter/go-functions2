@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"../spin"
+	"../cli/spin"
 )
 
 var spins = map[string]string{

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/robjporter/go-functions/http"
+
+	"../web/http"
 )
 
 func main() {

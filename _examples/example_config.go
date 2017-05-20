@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../config"
+	"../system/config"
 )
 
 func main() {

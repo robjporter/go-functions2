@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/robjporter/go-functions/cisco/ucs"
+
+	"../cisco/ucs"
 )
 
 func main() {

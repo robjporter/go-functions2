@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"../times"
+	"../format/times"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../regex"
+	"../format/regex"
 )
 
 func main() {

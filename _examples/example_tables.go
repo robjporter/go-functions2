@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../tables"
+	"../cli/tables"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/robjporter/go-functions/astilectron"
+	"../gui/astilectron"
 )
 
 func main() {

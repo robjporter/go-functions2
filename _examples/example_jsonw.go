@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../jsonw"
+	"../format/jsonw"
 )
 
 func main() {

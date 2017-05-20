@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../colors"
+	"../cli/colors"
 )
 
 func main() {

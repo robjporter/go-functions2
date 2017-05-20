@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"../time"
+	"../system/timing"
 )
 
 func main() {

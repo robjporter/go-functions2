@@ -3,7 +3,7 @@ package main
 import (
 	"io/ioutil"
 
-	"github.com/robjporter/go-functions/hermes"
+	"../email/hermes"
 )
 
 func main() {

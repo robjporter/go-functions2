@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../as"
+	"../format/as"
 )
 
 func main() {
@@ -214,5 +214,9 @@ func main() {
 	fmt.Println("FORMAT: (444444444444444444)       >", as.FormatIntToByte(444444444444444444))
 	fmt.Println("FORMAT: (999999999999999999)       >", as.FormatIntToByte(999999999999999999))
 	fmt.Println("FORMAT: (1000000000000000000)      >", as.FormatIntToByte(1152921504606846976))
+
+	fmt.Println("\nTO STRING FORMATS")
+	fmt.Println("=========================================================")
+	//fmt.Println("TOTITLE:                           >", as.ToString("testing"))
 
 }

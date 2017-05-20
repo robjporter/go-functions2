@@ -1,8 +1,9 @@
 package main
 
 import (
-	"../banner"
 	"fmt"
+
+	"../cli/banner"
 )
 
 func main() {

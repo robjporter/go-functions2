@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../terminal"
+	"../cli/terminal"
 )
 
 func main() {

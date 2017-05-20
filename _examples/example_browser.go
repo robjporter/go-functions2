@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../browser"
+	"../web/browser"
 )
 
 func main() {

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/robjporter/go-functions/request"
+
+	"../web/request"
 	//"os"
 )
 

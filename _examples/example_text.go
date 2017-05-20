@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../text"
+	"../format/text"
 )
 
 func main() {
