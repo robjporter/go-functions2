@@ -500,3 +500,39 @@ func ToOrdinise(number int) string {
 
 	return as.ToString(number) + Ordinise(number)
 }
+
+//Padding///////////////////////////////////////////////////////
+func PKCS7Padding(data []byte, blockSize int) []byte {
+	padding := blockSize - len(data)%blockSize
+	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	d := make([]byte, padding+len(data))
+	copy(d, data)
+	copy(d[len(data):], padtext)
+	return d
+
+}
+func PKCS7Unpadding(data []byte) []byte {
+	length := len(data)
+	unpadding := int(data[length-1])
+	d := make([]byte, length-unpadding)
+	copy(d, data)
+	return d
+}
+func PKCS7PaddingString(data2 string, blockSize int) []byte {
+	data := []byte(data2)
+	padding := blockSize - len(data)%blockSize
+	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	d := make([]byte, padding+len(data))
+	copy(d, data)
+	copy(d[len(data):], padtext)
+	return d
+
+}
+func PKCS7UnpaddingString(data2 string) []byte {
+	data := []byte(data2)
+	length := len(data)
+	unpadding := int(data[length-1])
+	d := make([]byte, length-unpadding)
+	copy(d, data)
+	return d
+}

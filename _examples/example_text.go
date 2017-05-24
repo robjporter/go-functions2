@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"../format/text"
+	"github.com/robjporter/go-functions/as"
 )
 
 func main() {
@@ -58,5 +59,9 @@ func main() {
 	fmt.Println("TOORDINISE5:           >", text.ToOrdinise(22))
 	fmt.Println("TOORDINISE6:           >", text.ToOrdinise(44))
 	fmt.Println("TOORDINISE7:           >", text.ToOrdinise(101))
-	fmt.Println("TOORDINISE8:           >", text.ToOrdinise(99))
+	a := text.PKCS7PaddingString("Testing", 20)
+	fmt.Println("PADDING:               >", a)
+	fmt.Println("PADDING STRING:        >", as.ToString(a))
+	fmt.Println("UNPADDING:             >", text.PKCS7Unpadding(a))
+	fmt.Println("UNPADDING STRING:      >", as.ToString(text.PKCS7Unpadding(a)))
 }
